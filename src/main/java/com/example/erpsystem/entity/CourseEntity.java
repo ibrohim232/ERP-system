@@ -13,11 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CourseEntity extends BaseEntity{
-    {
-        this.isActive=true;
-    }
     @Column(unique = true)
     private String courseName;
     private Integer moduleCount;
-    private Boolean isActive;
+
 }
