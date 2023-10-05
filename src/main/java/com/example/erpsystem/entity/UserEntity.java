@@ -33,8 +33,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private UserRole userRole;
     @Enumerated(value = EnumType.STRING)
     private List<Permissions> permissions;
-    @Column(columnDefinition = "boolean default true")
-    private boolean isActive;
+
 
     /**
      * Returns the authorities granted to the user. Cannot return <code>null</code>.
@@ -83,7 +82,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return isActive();
     }
 
     /**
