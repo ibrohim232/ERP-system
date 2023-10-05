@@ -19,5 +19,5 @@ public class LessonRequestDto {
     private Integer module;
     private Integer lessonNumber;
     private Status lessonStatus;
-    private Map<String,Boolean> attendance;
+    private Map<UUID,Boolean> attendance;
 }
