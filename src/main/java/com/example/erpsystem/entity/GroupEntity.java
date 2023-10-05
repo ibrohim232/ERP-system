@@ -1,5 +1,6 @@
 package com.example.erpsystem.entity;
 
+import com.example.erpsystem.entity.enums.GroupStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class GroupEntity extends BaseEntity {
     private UserEntity mentor;
     @ManyToOne
     private CourseEntity course;
+    private GroupStatus groupStatus;
     @OneToMany
     private List<UserEntity> students;
     @Column(columnDefinition = "int default 0")

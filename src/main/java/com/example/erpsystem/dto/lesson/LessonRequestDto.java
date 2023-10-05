@@ -1,14 +1,10 @@
 package com.example.erpsystem.dto.lesson;
 
-import com.example.erpsystem.entity.UserEntity;
-import com.example.erpsystem.entity.enums.Status;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
+import com.example.erpsystem.entity.enums.LessonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 @AllArgsConstructor
@@ -18,6 +14,6 @@ public class LessonRequestDto {
     private UUID groupId;
     private Integer module;
     private Integer lessonNumber;
-    private Status lessonStatus;
+    private LessonStatus lessonStatus;
     private Map<UUID,Boolean> attendance;
 }
