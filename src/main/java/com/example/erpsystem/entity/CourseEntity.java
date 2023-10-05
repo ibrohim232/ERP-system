@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Table(name = "course")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Course extends BaseEntity{
+public class CourseEntity extends BaseEntity{
     {
         this.isActive=true;
     }

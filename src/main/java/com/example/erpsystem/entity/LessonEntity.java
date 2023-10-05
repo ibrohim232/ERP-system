@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.ui.context.support.UiApplicationContextUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,12 +19,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Lesson extends BaseEntity{
+public class LessonEntity extends BaseEntity{
     private UUID groupId;
     private Integer module;
     @Column(unique = true,nullable = false)
     private Integer lessonNumber;
     private Status lessonStatus;
     @OneToMany
-    private List<User> attendance;
+    private List<UserEntity> attendance;
 }
