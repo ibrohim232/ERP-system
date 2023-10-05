@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 public class GroupEntity extends BaseEntity {
+    private String groupName;
     @OneToOne
     private UserEntity mentor;
     @ManyToOne
