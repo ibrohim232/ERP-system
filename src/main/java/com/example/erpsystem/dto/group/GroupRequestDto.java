@@ -1,10 +1,5 @@
 package com.example.erpsystem.dto.group;
 
-import com.example.erpsystem.entity.CourseEntity;
-import com.example.erpsystem.entity.UserEntity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
