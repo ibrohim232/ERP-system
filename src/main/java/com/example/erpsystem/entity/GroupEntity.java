@@ -9,17 +9,17 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "course")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Course extends BaseEntity{
-    {
-        this.isActive=true;
-    }
-    @Column(unique = true)
-    private String courseName;
-    private Integer moduleCount;
-    private Boolean isActive;
+public class GroupEntity extends BaseEntity {
+    @OneToOne
+    private UserEntity mentor;
+    @ManyToOne
+    private CourseEntity course;
+    @OneToMany
+    private List<UserEntity> students;
+    @Column(columnDefinition = "int default 0")
+    private int module;
 }
