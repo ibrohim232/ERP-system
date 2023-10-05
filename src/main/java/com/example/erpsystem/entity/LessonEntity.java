@@ -26,5 +26,5 @@ public class LessonEntity extends BaseEntity{
     private Integer lessonNumber;
     private LessonStatus lessonStatus;
     @OneToMany
-    private Map<UserEntity,Boolean> attendance;
+    private Map<UserEntity,AttendanceEntity> attendance;
 }

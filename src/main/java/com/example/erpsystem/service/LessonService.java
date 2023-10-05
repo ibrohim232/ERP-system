@@ -2,6 +2,7 @@ package com.example.erpsystem.service;
 
 import com.example.erpsystem.dto.lesson.LessonRequestDto;
 import com.example.erpsystem.dto.lesson.LessonResponseDto;
+import com.example.erpsystem.entity.AttendanceEntity;
 import com.example.erpsystem.entity.GroupEntity;
 import com.example.erpsystem.entity.LessonEntity;
 import com.example.erpsystem.entity.UserEntity;
@@ -41,12 +42,12 @@ public class LessonService extends BaseService<
     @Override
     protected LessonEntity mapCRToEntity(LessonRequestDto createReq) {
         LessonEntity lessonEntity = modelMapper.map(createReq, LessonEntity.class);
-        HashMap<UserEntity, Boolean> attendanceList = new HashMap<>();
+        HashMap<UserEntity, AttendanceEntity> attendanceList = new HashMap<>();
         for (Map.Entry<UUID, Boolean> entry : createReq.getAttendance().entrySet()) {
             UserEntity user = userRepository.findById(entry.getKey())
                     .orElseThrow(()->new DataNotFoundException("user not found by id in loop"));
-
-            attendanceList.put(user,entry.getValue());
+            AttendanceEntity attendanceEntity = new AttendanceEntity(entry.getValue());
+            attendanceList.put(user,attendanceEntity);
 
         }
         lessonEntity.setAttendance(attendanceList);
