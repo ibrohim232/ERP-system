@@ -1,6 +1,5 @@
 package com.example.erpsystem.entity;
 
-import com.example.erpsystem.entity.enums.Permissions;
 import com.example.erpsystem.entity.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,10 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -30,9 +32,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(unique = true)
     private String phoneNumber;
     @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(32) default 'USER'")
     private UserRole userRole;
-    @Enumerated(value = EnumType.STRING)
-    private List<Permissions> permissions;
 
 
     /**
@@ -42,7 +43,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new HashSet<>(Set.of(new SimpleGrantedAuthority("ROLE_" + userRole.name())));
     }
 
 
