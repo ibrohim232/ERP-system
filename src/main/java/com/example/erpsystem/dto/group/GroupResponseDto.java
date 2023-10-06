@@ -1,6 +1,6 @@
 package com.example.erpsystem.dto.group;
 
-import com.example.erpsystem.dto.BaseDto;
+import com.example.erpsystem.dto.base.BaseDto;
 import com.example.erpsystem.entity.CourseEntity;
 import com.example.erpsystem.entity.UserEntity;
 import jakarta.persistence.ManyToOne;

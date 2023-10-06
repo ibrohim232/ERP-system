@@ -1,6 +1,6 @@
 package com.example.erpsystem.dto.lesson;
 
-import com.example.erpsystem.dto.BaseDto;
+import com.example.erpsystem.dto.base.BaseDto;
 import com.example.erpsystem.entity.enums.LessonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -16,6 +16,4 @@ public class UserRequestDto {
     private String userName;
     private String password;
     private String phoneNumber;
-    private UserRole role;
-    private List<Permissions> permissions;
 }

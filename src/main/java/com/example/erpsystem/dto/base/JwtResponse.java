@@ -1,4 +1,4 @@
-package com.example.erpsystem.dto;
+package com.example.erpsystem.dto.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

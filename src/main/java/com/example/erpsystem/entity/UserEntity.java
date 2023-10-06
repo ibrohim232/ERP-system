@@ -78,7 +78,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
      */
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return isActive();
     }
 
     /**

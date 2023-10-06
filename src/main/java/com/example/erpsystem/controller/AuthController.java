@@ -1,7 +1,7 @@
 package com.example.erpsystem.controller;
 
 
-import com.example.erpsystem.dto.JwtResponse;
+import com.example.erpsystem.dto.base.JwtResponse;
 import com.example.erpsystem.dto.user.*;
 import com.example.erpsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
