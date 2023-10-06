@@ -19,7 +19,10 @@ public enum Permissions {
     COURSE_CREATE,
     COURSE_GET,
     COURSE_UPDATE,
-    COURSE_DELETE;
+    COURSE_DELETE,
+
+    CHANGE_ROLE,
+    CHANGE_PERMISSION;
 
 
 }

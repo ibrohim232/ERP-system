@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final UserService userService;
 
-    @PostMapping("/sing-up")
+    @PostMapping("/sign-up")
     public UserResponseDto singUp(@RequestBody UserRequestDto userRequestDto) {
         return userService.create(userRequestDto);
     }
 
-    @PostMapping("sing-in")
+    @PostMapping("sign-in")
     public JwtResponse singIn(@RequestBody SingIdDto singIdDto) {
         return userService.singIn(singIdDto);
     }

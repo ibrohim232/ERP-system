@@ -1,10 +1,8 @@
 package com.example.erpsystem.entity;
 
+import com.example.erpsystem.entity.enums.Permissions;
 import com.example.erpsystem.entity.enums.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -33,7 +28,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String phoneNumber;
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(32) default 'USER'")
-    private UserRole userRole;
+    private UserRole role;
+    @Enumerated(value = EnumType.STRING)
+    private List<Permissions> permissions;
 
 
     /**
@@ -43,7 +40,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new HashSet<>(Set.of(new SimpleGrantedAuthority("ROLE_" + userRole.name())));
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>(Set.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
+        if (permissions!=null){
+            simpleGrantedAuthorities.addAll(Arrays.stream(Permissions.values()).map(
+                    permission -> new SimpleGrantedAuthority(permission.name())
+            ).toList());
+        }
+        return simpleGrantedAuthorities;
     }
 
 

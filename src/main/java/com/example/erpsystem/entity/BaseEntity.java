@@ -15,14 +15,15 @@ import java.util.UUID;
 @MappedSuperclass
 @Data
 public abstract class BaseEntity {
+    {this.isActive=true;}
     @Id
     @GeneratedValue
     protected UUID id;
     @CreationTimestamp
-    protected LocalDateTime createdDate;
+    protected LocalDateTime created;
 
     @UpdateTimestamp
-    protected LocalDateTime updatedDate;
+    protected LocalDateTime updated;
     @Column(columnDefinition = "boolean default true")
     private boolean isActive;
 
