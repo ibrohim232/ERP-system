@@ -20,9 +20,10 @@ public class GroupEntity extends BaseEntity {
     private UserEntity mentor;
     @ManyToOne
     private CourseEntity course;
+    @Enumerated(value = EnumType.STRING)
     private GroupStatus groupStatus;
     @OneToMany
     private List<UserEntity> students;
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int default 1")
     private int module;
 }
