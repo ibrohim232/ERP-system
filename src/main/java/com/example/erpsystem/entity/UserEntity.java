@@ -19,6 +19,10 @@ import java.util.*;
 @Getter
 @Setter
 public class UserEntity extends BaseEntity implements UserDetails {
+    {
+        this.role = UserRole.USER;
+    }
+
     private String fullName;
     @Column(unique = true)
     private String userName;
@@ -27,7 +31,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(unique = true)
     private String phoneNumber;
     @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "varchar(32) default 'USER'")
     private UserRole role;
     @Enumerated(value = EnumType.STRING)
     private List<Permissions> permissions;
@@ -41,7 +44,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>(Set.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
-        if (permissions!=null){
+        if (permissions != null) {
             simpleGrantedAuthorities.addAll(Arrays.stream(Permissions.values()).map(
                     permission -> new SimpleGrantedAuthority(permission.name())
             ).toList());

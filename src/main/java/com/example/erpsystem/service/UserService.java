@@ -1,9 +1,7 @@
 package com.example.erpsystem.service;
 
 import com.example.erpsystem.dto.JwtResponse;
-import com.example.erpsystem.dto.user.SingIdDto;
-import com.example.erpsystem.dto.user.UserRequestDto;
-import com.example.erpsystem.dto.user.UserResponseDto;
+import com.example.erpsystem.dto.user.*;
 import com.example.erpsystem.entity.UserEntity;
 import com.example.erpsystem.exception.DataNotFoundException;
 import com.example.erpsystem.repository.UserRepository;
@@ -27,12 +25,20 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
 
     @Override
     protected UserResponseDto mapEntityToRES(UserEntity entity) {
-        return modelMapper.map(entity, UserResponseDto.class);
+        return new UserResponseDto(
+                entity.getId(),
+                entity.getCreated(),
+                entity.getUpdated(),
+                entity.getFullName(),
+                entity.getUsername(),
+                entity.getPhoneNumber());
     }
 
     @Override
     protected UserEntity mapCRToEntity(UserRequestDto createReq) {
-        return modelMapper.map(createReq, UserEntity.class);
+        UserEntity map = modelMapper.map(createReq, UserEntity.class);
+        map.setPassword(passwordEncoder.encode(map.getPassword()));
+        return map;
     }
 
     public JwtResponse singIn(SingIdDto singIdDto) {
@@ -44,5 +50,19 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
         } catch (Exception e) {
             throw new DataNotFoundException("Username or password incorrect");
         }
+    }
+
+    public UserResponseDto updateUserRole(UpdateUserRoleDto dto) {
+        UserEntity user = repository.findById(dto.getUserId()).orElseThrow(() -> new DataNotFoundException("user not found"));
+        user.setRole(dto.getRole());
+        repository.save(user);
+        return mapEntityToRES(user);
+    }
+
+    public UserResponseDto updateUserPermissions(UpdateUserPermissionsDto dto) {
+        UserEntity user = repository.findById(dto.getUserId()).orElseThrow(() -> new DataNotFoundException("user not found"));
+        user.setPermissions(dto.getPermissions());
+        repository.save(user);
+        return mapEntityToRES(user);
     }
 }
