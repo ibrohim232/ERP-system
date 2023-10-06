@@ -1,6 +1,6 @@
 package com.example.erpsystem.service;
 
-import com.example.erpsystem.dto.JwtResponse;
+import com.example.erpsystem.dto.base.JwtResponse;
 import com.example.erpsystem.dto.user.*;
 import com.example.erpsystem.entity.UserEntity;
 import com.example.erpsystem.exception.DataNotFoundException;

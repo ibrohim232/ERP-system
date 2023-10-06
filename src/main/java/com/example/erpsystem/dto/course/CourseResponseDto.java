@@ -1,6 +1,6 @@
 package com.example.erpsystem.dto.course;
 
-import com.example.erpsystem.dto.BaseDto;
+import com.example.erpsystem.dto.base.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

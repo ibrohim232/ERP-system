@@ -1,7 +1,7 @@
 package com.example.erpsystem.exception;
 
 
-import com.example.erpsystem.dto.ErrorDto;
+import com.example.erpsystem.dto.base.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
