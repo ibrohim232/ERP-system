@@ -16,8 +16,8 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public UserResponseDto singUp(@RequestBody UserRequestDto userRequestDto) {
-        return userService.create(userRequestDto);
+    public JwtResponse singUp(@RequestBody UserRequestDto userRequestDto) {
+        return userService.singUp(userRequestDto);
     }
 
     @PostMapping("/sign-in")

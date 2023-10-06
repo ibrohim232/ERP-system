@@ -41,6 +41,12 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
         return map;
     }
 
+
+    public JwtResponse singUp(UserRequestDto createReq) {
+        UserEntity save = repository.save(mapCRToEntity(createReq));
+        return new JwtResponse(jwtService.generateToken(save));
+    }
+
     public JwtResponse singIn(SingIdDto singIdDto) {
         try {
             UserEntity userEntity = repository.findByUserName(singIdDto.getUserName()).orElseThrow();
