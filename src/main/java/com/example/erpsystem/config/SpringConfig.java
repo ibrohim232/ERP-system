@@ -24,17 +24,15 @@ public class SpringConfig {
     private final AuthenticationService authenticationService;
 
 
-    private final String[] WHITE_LIST = {"/sign-up","/sign-in"};
+    private final String[] WHITE_LIST = {"/sign-up", "/sign-in"};
 
     @Bean
-    public SecurityFilterChain configure (HttpSecurity http) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requestConfigurer -> {
                     requestConfigurer
                             .requestMatchers(WHITE_LIST).permitAll()
-                            .requestMatchers("/order/update-status","/order/get-all").hasRole("LIBRARIAN")
-                            .requestMatchers("/order/create","/order/update-count","/order/get-by-user-id").hasRole("USER")
                             .anyRequest().authenticated();
                 })
                 .addFilterBefore(new JwtFilter(jwtService, authenticationService),
