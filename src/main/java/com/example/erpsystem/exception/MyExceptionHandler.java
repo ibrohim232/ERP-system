@@ -25,4 +25,20 @@ public class MyExceptionHandler {
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(massages.toString(), 404));
     }
+
+    @ExceptionHandler(DataAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> DataAlreadyExistsExceptionHandler(DataAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(e.getMessage(), 404));
+    }
+
+    @ExceptionHandler(WrongInputException.class)
+    public ResponseEntity<ErrorDto> WrongInputExceptionHandler(WrongInputException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(e.getMessage(), 404));
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<ErrorDto> DataAlreadyExistsExceptionHandler(Throwable e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(e.getMessage(), 404));
+    }
+
 }

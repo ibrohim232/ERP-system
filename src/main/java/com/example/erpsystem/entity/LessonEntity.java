@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "lesson")
+@Table(name = "lessons")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

@@ -10,5 +10,5 @@ import java.util.*;
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByUserName(String userName);
 
-    Set<UserEntity> findByUserNameIn(List<String> userName);
+    Set<UserEntity> findByUserNameIn(Set<String> userName);
 }
