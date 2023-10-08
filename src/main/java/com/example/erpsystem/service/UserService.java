@@ -4,6 +4,7 @@ import com.example.erpsystem.dto.base.JwtResponse;
 import com.example.erpsystem.dto.user.*;
 import com.example.erpsystem.entity.UserEntity;
 import com.example.erpsystem.exception.DataNotFoundException;
+import com.example.erpsystem.exception.WrongInputException;
 import com.example.erpsystem.repository.UserRepository;
 import com.example.erpsystem.service.jwt.JwtService;
 import org.modelmapper.ModelMapper;
@@ -31,7 +32,7 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
                 entity.getUpdated(),
                 entity.getFullName(),
                 entity.getUsername(),
-                entity.getPhoneNumber());
+                entity.getPhoneNumber(), entity.getRole(), entity.getPermissions());
     }
 
     @Override
@@ -54,7 +55,7 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
                 throw new RuntimeException();
             return new JwtResponse(jwtService.generateToken(userEntity));
         } catch (Exception e) {
-            throw new DataNotFoundException("Username or password incorrect");
+            throw new WrongInputException("Username or password incorrect");
         }
     }
 

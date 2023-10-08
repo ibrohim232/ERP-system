@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "attendance")
+@Table(name = "attendances")
 public class AttendanceEntity extends BaseEntity{
     private Boolean attendance;
 }

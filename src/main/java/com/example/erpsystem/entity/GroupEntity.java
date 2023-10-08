@@ -14,15 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "groups")
 public class GroupEntity extends BaseEntity {
     private String groupName;
-    @OneToOne
+    @ManyToOne
     private UserEntity mentor;
     @ManyToOne
     private CourseEntity course;
     @Enumerated(value = EnumType.STRING)
     private GroupStatus groupStatus;
-    @OneToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserEntity> students;
     @Column(columnDefinition = "int default 1")
     private int module;

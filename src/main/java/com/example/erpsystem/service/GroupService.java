@@ -4,6 +4,7 @@ import com.example.erpsystem.dto.group.AddStudentInGroupDto;
 import com.example.erpsystem.dto.group.GroupRequestDto;
 import com.example.erpsystem.dto.group.GroupResponseDto;
 import com.example.erpsystem.dto.user.UserRequestDto;
+import com.example.erpsystem.dto.user.UserResponseDto;
 import com.example.erpsystem.entity.CourseEntity;
 import com.example.erpsystem.entity.GroupEntity;
 import com.example.erpsystem.entity.LessonEntity;
@@ -13,36 +14,45 @@ import com.example.erpsystem.entity.enums.LessonStatus;
 import com.example.erpsystem.entity.enums.UserRole;
 import com.example.erpsystem.exception.DataAlreadyExistsException;
 import com.example.erpsystem.exception.DataNotFoundException;
+import com.example.erpsystem.exception.WrongInputException;
 import com.example.erpsystem.repository.CourseRepository;
 import com.example.erpsystem.repository.GroupRepository;
 import com.example.erpsystem.repository.LessonRepository;
 import com.example.erpsystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository, GroupResponseDto, GroupRequestDto> {
-    public GroupService(GroupRepository repository, ModelMapper modelMapper, UserRepository userRepository, LessonRepository lessonRepository, CourseRepository courseRepository) {
+    public GroupService(GroupRepository repository, ModelMapper modelMapper, UserRepository userRepository, LessonRepository lessonRepository, CourseRepository courseRepository, UserService userService, CourseService courseService, PasswordEncoder passwordEncoder) {
         super(repository, modelMapper);
         this.userRepository = userRepository;
         this.lessonRepository = lessonRepository;
         this.courseRepository = courseRepository;
-
+        this.userService = userService;
+        this.courseService = courseService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private final UserRepository userRepository;
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
+    private final UserService userService;
+    private final CourseService courseService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     protected GroupResponseDto mapEntityToRES(GroupEntity entity) {
-        return modelMapper.map(entity, GroupResponseDto.class);
+        List<UserResponseDto> students = entity.getStudents().stream().map(userService::mapEntityToRES).toList();
+        return new GroupResponseDto(entity.getId(), entity.getCreated(), entity.getUpdated(), userService.mapEntityToRES(entity.getMentor()), courseService.mapEntityToRES(entity.getCourse()), students, entity.getModule());
     }
 
     @Override
@@ -52,7 +62,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         if (mentor.getRole() != UserRole.MENTOR) {
             throw new DataNotFoundException("Mentor with id: " + createReq.getMentor() + " not found");
         }
-        List<String> studentNames = createReq.getStudents().stream().map(UserRequestDto::getUserName).toList();
+        Set<String> studentNames = createReq.getStudents().stream().map(UserRequestDto::getUserName).collect(Collectors.toSet());
         Set<UserEntity> students = userRepository.findByUserNameIn(studentNames);
         createReq.getStudents().forEach(userRequestDto -> {
             students.add(new UserEntity(userRequestDto.getFullName(), userRequestDto.getUserName(), userRequestDto.getPassword(), userRequestDto.getPhoneNumber(), UserRole.USER, null));
@@ -60,11 +70,11 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
 
 
         if (students.size() > 25) {
-            throw new DataAlreadyExistsException("so many students");
+            throw new WrongInputException("so many students");
         }
         students.forEach(userEntity -> userEntity.setRole(UserRole.STUDENT));
+        students.forEach(userEntity -> userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword())));
         userRepository.saveAll(students);
-
         return new GroupEntity(createReq.getGroupName(), mentor, course, GroupStatus.PENDING, students.stream().toList(), 1);
     }
 
@@ -72,7 +82,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         UserEntity student = userRepository.findByUserName(dto.getStudent().getUserName()).orElseThrow(() -> new DataNotFoundException("user not found"));
         GroupEntity group = repository.findById(dto.getGroupId()).orElseThrow(() -> new DataNotFoundException("resource with id: " + dto.getGroupId() + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
-            throw new RuntimeException("group already finished ");
+            throw new DataAlreadyExistsException("group already finished ");
         }
         if (group.getStudents().size() < 25) {
             student.setRole(UserRole.STUDENT);
@@ -80,14 +90,14 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             group.getStudents().add(student);
             repository.save(group);
         } else {
-            throw new RuntimeException("so many students");
+            throw new WrongInputException("so many students");
         }
     }
 
     public void startGroup(UUID groupId) {
         GroupEntity group = repository.findById(groupId).orElseThrow(() -> new DataNotFoundException("resource with id: " + groupId + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED) || group.getGroupStatus().equals(GroupStatus.STARTED)) {
-            throw new RuntimeException("group finished or already started");
+            throw new WrongInputException("group finished or already started");
         }
         createLesson(group.getId(), group.getModule());
         group.setGroupStatus(GroupStatus.STARTED);
@@ -97,7 +107,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
     public void finishGroup(UUID groupId) {
         GroupEntity group = repository.findById(groupId).orElseThrow(() -> new DataNotFoundException("resource with id: " + groupId + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
-            throw new RuntimeException("group already finished ");
+            throw new WrongInputException("group already finished ");
         }
         group.setGroupStatus(GroupStatus.FINISHED);
         repository.save(group);
@@ -106,7 +116,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
     public void changeModule(UUID groupId) {
         GroupEntity group = repository.findById(groupId).orElseThrow(() -> new DataNotFoundException("resource with id: " + groupId + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
-            throw new RuntimeException("group already finished ");
+            throw new WrongInputException("group already finished ");
         }
         if (group.getModule() + 1 == 11) {
             group.setGroupStatus(GroupStatus.FINISHED);
