@@ -44,6 +44,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
     private final UserService userService;
     private final CourseService courseService;
     private final PasswordEncoder passwordEncoder;
+    private final Random random = new Random();
 
 
     @Override
@@ -67,7 +68,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             Set<String> studentNames = createReq.getStudents().stream().map(UserRequestDto::getUserName).collect(Collectors.toSet());
             students = userRepository.findByUserNameIn(studentNames);
             createReq.getStudents().forEach(userRequestDto -> {
-                students.add(new UserEntity(userRequestDto.getFullName(), userRequestDto.getUserName(), userRequestDto.getPassword(), userRequestDto.getPhoneNumber(), UserRole.USER, null));
+                students.add(new UserEntity(userRequestDto.getFullName(), userRequestDto.getUserName(), userRequestDto.getPassword(), userRequestDto.getPhoneNumber(), UserRole.USER, null, userRequestDto.getEmail(), false, random.nextInt(100, 1000)));
             });
         } else {
             students = null;
@@ -86,7 +87,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
 
     public void addStudent(AddStudentInGroupDto dto) {
         Optional<UserEntity> user = userRepository.findByUserName(dto.getStudent().getUserName());
-        if (user.isPresent()){
+        if (user.isPresent()) {
             throw new DataAlreadyExistsException("user already exists with this username. Please choose another one");
         }
         GroupEntity group = repository.findById(dto.getGroupId()).orElseThrow(() -> new DataNotFoundException("resource with id: " + dto.getGroupId() + " not found"));

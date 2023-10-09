@@ -16,13 +16,18 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public JwtResponse singUp(@RequestBody UserRequestDto userRequestDto) {
+    public UserResponseDto singUp(@RequestBody UserRequestDto userRequestDto) {
         return userService.singUp(userRequestDto);
     }
 
     @PostMapping("/sign-in")
     public JwtResponse singIn(@RequestBody SingIdDto singIdDto) {
         return userService.singIn(singIdDto);
+    }
+
+    @PostMapping("/validation")
+    public JwtResponse validation(@RequestParam String email, @RequestParam int code){
+     return userService.checkCode(email,code);
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN') and hasAuthority('USER_GET')")
