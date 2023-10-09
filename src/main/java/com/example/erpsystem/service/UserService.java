@@ -59,13 +59,16 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
         if (createReq.getEmail() == null) {
             throw new WrongInputException("email is null");
         }
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(sender);
-        message.setTo(createReq.getEmail());
-        message.setText(String.valueOf(user.getCode()));
-        javaMailSender.send(message);
-        UserEntity save = repository.save(user);
-        return modelMapper.map(save, UserResponseDto.class);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(sender);
+            message.setTo(createReq.getEmail());
+            message.setText(String.valueOf(user.getCode()));
+            javaMailSender.send(message);
+            return mapEntityToRES(repository.save(user));
+        } catch (Exception e) {
+            throw new WrongInputException(e.getMessage());
+        }
     }
 
     public JwtResponse singIn(SingIdDto singIdDto) {
