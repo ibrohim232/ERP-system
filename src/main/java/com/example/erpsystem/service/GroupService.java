@@ -118,8 +118,14 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
             throw new WrongInputException("group already finished ");
         }
+        List<LessonEntity> lessonEntities = lessonRepository.findLessonEntitiesByGroupIdAndModule(group.getId(), group.getModule()).orElseThrow(() -> new DataNotFoundException("this module has not started"));
+
         group.setGroupStatus(GroupStatus.FINISHED);
         repository.save(group);
+        lessonEntities.forEach(lessonEntity -> {
+            lessonEntity.setLessonStatus(LessonStatus.COMPLETED);
+        });
+        lessonRepository.saveAll(lessonEntities);
     }
 
     public void changeModule(UUID groupId) {
@@ -127,6 +133,12 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
             throw new WrongInputException("group already finished ");
         }
+        List<LessonEntity> lessonEntities = lessonRepository.findLessonEntitiesByGroupIdAndModule(group.getId(), group.getModule()).orElseThrow(() -> new DataNotFoundException("this module has not started "));
+        lessonEntities.forEach(lessonEntity -> {
+            if (lessonEntity.getLessonStatus() == LessonStatus.CREATED || lessonEntity.getLessonStatus() == LessonStatus.STARTED) {
+                throw new WrongInputException("");
+            }
+        });
         if (group.getModule() + 1 == 11) {
             group.setGroupStatus(GroupStatus.FINISHED);
         } else {
