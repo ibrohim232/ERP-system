@@ -9,6 +9,7 @@ import com.example.erpsystem.entity.LessonEntity;
 import com.example.erpsystem.entity.UserEntity;
 import com.example.erpsystem.entity.enums.LessonStatus;
 import com.example.erpsystem.exception.DataNotFoundException;
+import com.example.erpsystem.exception.WrongInputException;
 import com.example.erpsystem.repository.GroupRepository;
 import com.example.erpsystem.repository.LessonRepository;
 import com.example.erpsystem.repository.UserRepository;
@@ -37,8 +38,8 @@ public class LessonService extends BaseService<
                 .orElseThrow(()->new DataNotFoundException("group not found."));
         lessonResponseDto.setGroupName(groupEntity.getGroupName());
         HashMap<String, Boolean> attendanceList = new HashMap<>();
-        for (Map.Entry<UserEntity, AttendanceEntity> entry : entity.getAttendance().entrySet()) {
-            attendanceList.put(entry.getKey().getUsername(),entry.getValue().getAttendance());
+        for (AttendanceEntity attendance : entity.getAttendance()) {
+            attendanceList.put(attendance.getUser().getUsername(),attendance.getAttendance());
         }
         lessonResponseDto.setAttendance(attendanceList);
         return lessonResponseDto;
@@ -47,16 +48,27 @@ public class LessonService extends BaseService<
     @Override
     protected LessonEntity mapCRToEntity(LessonRequestDto createReq) {
         LessonEntity lessonEntity = modelMapper.map(createReq, LessonEntity.class);
-        HashMap<UserEntity, AttendanceEntity> attendanceList = new HashMap<>();
-        for (Map.Entry<UUID, Boolean> entry : createReq.getAttendance().entrySet()) {
-            UserEntity user = userRepository.findById(entry.getKey())
-                    .orElseThrow(()->new DataNotFoundException("user not found by id in loop"));
-            AttendanceEntity attendanceEntity = new AttendanceEntity(entry.getValue());
-            attendanceList.put(user,attendanceEntity);
-
-        }
+        ArrayList<AttendanceEntity> attendanceList = new ArrayList<>();
         lessonEntity.setAttendance(attendanceList);
         return lessonEntity;
+    }
+
+    public void endLesson(UUID id) {
+        LessonEntity lessonEntity = repository.findById(id).orElseThrow(() -> new WrongInputException("lesson with id: " + id + " not found"));
+        if (lessonEntity.getLessonStatus() == LessonStatus.COMPLETED || lessonEntity.getLessonStatus() == LessonStatus.CREATED) {
+            throw new WrongInputException("lesson already finished or lesson has not started yet");
+        }
+        lessonEntity.setLessonStatus(LessonStatus.COMPLETED);
+        repository.save(lessonEntity);
+    }
+
+    public void startLesson(UUID id) {
+        LessonEntity lessonEntity = repository.findById(id).orElseThrow(() -> new WrongInputException("lesson with id: " + id + " not found"));
+        if (lessonEntity.getLessonStatus() == LessonStatus.COMPLETED ||  lessonEntity.getLessonStatus() == LessonStatus.STARTED) {
+            throw new WrongInputException("lesson already started or already finished");
+        }
+        lessonEntity.setLessonStatus(LessonStatus.STARTED);
+        repository.save(lessonEntity);
     }
 
 
