@@ -22,7 +22,9 @@ public enum Permissions {
     COURSE_DELETE,
 
     CHANGE_ROLE,
-    CHANGE_PERMISSION;
+    CHANGE_PERMISSION,
+
+    TAKE_ATTENDANCE
 
 
 }

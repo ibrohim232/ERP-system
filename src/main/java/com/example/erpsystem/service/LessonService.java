@@ -59,33 +59,5 @@ public class LessonService extends BaseService<
         return lessonEntity;
     }
 
-    public boolean attendanceTaking(AttendanceDto attendanceDto){
-        GroupEntity groupEntity = groupRepository.findById(attendanceDto.getGroupId()).orElseThrow(() -> new DataNotFoundException("group not found"));
 
-        HashMap<UserEntity, AttendanceEntity> attendanceList = new HashMap<>();
-        for (Map.Entry<UUID, Boolean> entry :attendanceDto.getAttendance().entrySet()) {
-            UserEntity user = userRepository.findById(entry.getKey())
-                    .orElseThrow(()->new DataNotFoundException("user not found by id in loop"));
-            AttendanceEntity attendanceEntity = new AttendanceEntity(entry.getValue());
-            attendanceList.put(user,attendanceEntity);
-
-        }
-        if (attendanceDto.getMentorId().equals(groupEntity.getMentor().getId())){
-            List<LessonEntity> lessonEntities = repository.findLessonEntitiesByGroupId(attendanceDto.getGroupId()).orElseThrow(() -> new DataNotFoundException("lessons not found"));
-            LessonEntity startedLesson = lessonEntities.stream()
-                    .filter(lesson -> lesson.getLessonStatus().equals(LessonStatus.STARTED))
-                    .findFirst()
-                    .orElseThrow(()->new DataNotFoundException("lesson not found by id in loop"));
-            startedLesson.setAttendance(attendanceList);
-        }
-        return true;
-    }
-
-    public Map<String,Boolean> getByLesson(UUID lessonId){
-        LessonEntity lessonEntity = repository.findById(lessonId)
-                .orElseThrow(() -> new DataNotFoundException("lesson found by id in loop"));
-
-        LessonResponseDto lessonResponseDto = mapEntityToRES(lessonEntity);
-        return lessonResponseDto.getAttendance();
-    }
 }

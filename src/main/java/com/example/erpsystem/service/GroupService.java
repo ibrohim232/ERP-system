@@ -23,10 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,15 +85,20 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
     }
 
     public void addStudent(AddStudentInGroupDto dto) {
-        UserEntity student = userRepository.findByUserName(dto.getStudent().getUserName()).orElseThrow(() -> new DataNotFoundException("user not found"));
+        Optional<UserEntity> user = userRepository.findByUserName(dto.getStudent().getUserName());
+        if (user.isPresent()){
+            throw new DataAlreadyExistsException("user already exists with this username. Please choose another one");
+        }
         GroupEntity group = repository.findById(dto.getGroupId()).orElseThrow(() -> new DataNotFoundException("resource with id: " + dto.getGroupId() + " not found"));
+        UserEntity userEntity = modelMapper.map(dto.getStudent(), UserEntity.class);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED)) {
             throw new DataAlreadyExistsException("group already finished ");
         }
         if (group.getStudents().size() < 25) {
-            student.setRole(UserRole.STUDENT);
-            userRepository.save(student);
-            group.getStudents().add(student);
+            userEntity.setRole(UserRole.STUDENT);
+            userRepository.save(userEntity);
+            group.getStudents().add(userEntity);
             repository.save(group);
         } else {
             throw new WrongInputException("so many students");
