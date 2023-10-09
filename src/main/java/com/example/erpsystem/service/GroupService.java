@@ -51,7 +51,10 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
 
     @Override
     protected GroupResponseDto mapEntityToRES(GroupEntity entity) {
-        List<UserResponseDto> students = entity.getStudents().stream().map(userService::mapEntityToRES).toList();
+        List<UserResponseDto> students = null;
+        if (entity.getStudents() != null) {
+            students = entity.getStudents().stream().map(userService::mapEntityToRES).toList();
+        }
         return new GroupResponseDto(entity.getId(), entity.getCreated(), entity.getUpdated(), userService.mapEntityToRES(entity.getMentor()), courseService.mapEntityToRES(entity.getCourse()), students, entity.getModule());
     }
 
@@ -62,13 +65,19 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         if (mentor.getRole() != UserRole.MENTOR) {
             throw new DataNotFoundException("Mentor with id: " + createReq.getMentor() + " not found");
         }
-        Set<String> studentNames = createReq.getStudents().stream().map(UserRequestDto::getUserName).collect(Collectors.toSet());
-        Set<UserEntity> students = userRepository.findByUserNameIn(studentNames);
-        createReq.getStudents().forEach(userRequestDto -> {
-            students.add(new UserEntity(userRequestDto.getFullName(), userRequestDto.getUserName(), userRequestDto.getPassword(), userRequestDto.getPhoneNumber(), UserRole.USER, null));
-        });
+        Set<UserEntity> students;
+        if (createReq.getStudents() != null) {
+            Set<String> studentNames = createReq.getStudents().stream().map(UserRequestDto::getUserName).collect(Collectors.toSet());
+            students = userRepository.findByUserNameIn(studentNames);
+            createReq.getStudents().forEach(userRequestDto -> {
+                students.add(new UserEntity(userRequestDto.getFullName(), userRequestDto.getUserName(), userRequestDto.getPassword(), userRequestDto.getPhoneNumber(), UserRole.USER, null));
+            });
+        } else {
+            students = null;
+        }
 
 
+        assert students != null;
         if (students.size() > 25) {
             throw new WrongInputException("so many students");
         }
