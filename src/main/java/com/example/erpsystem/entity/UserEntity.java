@@ -39,7 +39,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String email;
     @Column(columnDefinition = "boolean default false")
     private boolean isValidate;
-    //@Column(nullable = false)
+    @Column(nullable = false)
     private int code;
 
 
