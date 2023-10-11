@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +24,6 @@ public class LessonEntity extends BaseEntity{
     private Integer lessonNumber;
     @Enumerated(EnumType.STRING)
     private LessonStatus lessonStatus;
-    @OneToMany
-    private Map<UserEntity,AttendanceEntity> attendance;
+    @OneToMany(mappedBy = "lesson")
+    private List<AttendanceEntity> attendance;
 }

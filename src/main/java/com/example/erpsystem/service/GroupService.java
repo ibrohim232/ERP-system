@@ -45,6 +45,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
     private final CourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final Random random = new Random();
+    private GroupEntity modifiedGroup;
 
 
     @Override
@@ -101,11 +102,14 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             userRepository.save(userEntity);
             group.getStudents().add(userEntity);
             repository.save(group);
+            modifiedGroup=group;
         } else {
             throw new WrongInputException("so many students");
         }
     }
-
+    public GroupEntity getModifiedGroup(){
+        return modifiedGroup;
+    }
     public void startGroup(UUID groupId) {
         GroupEntity group = repository.findById(groupId).orElseThrow(() -> new DataNotFoundException("resource with id: " + groupId + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED) || group.getGroupStatus().equals(GroupStatus.STARTED)) {
@@ -114,6 +118,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
         createLesson(group.getId(), group.getModule());
         group.setGroupStatus(GroupStatus.STARTED);
         repository.save(group);
+        modifiedGroup=group;
     }
 
     public void finishGroup(UUID groupId) {
@@ -125,6 +130,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
 
         group.setGroupStatus(GroupStatus.FINISHED);
         repository.save(group);
+        modifiedGroup=group;
         lessonEntities.forEach(lessonEntity -> {
             lessonEntity.setLessonStatus(LessonStatus.COMPLETED);
         });
@@ -149,6 +155,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             createLesson(group.getId(), group.getModule());
         }
         repository.save(group);
+        modifiedGroup=group;
     }
 
     private void createLesson(UUID groupId, int module) {
