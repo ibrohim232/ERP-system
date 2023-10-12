@@ -107,9 +107,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             throw new WrongInputException("so many students");
         }
     }
-    public GroupEntity getModifiedGroup(){
-        return modifiedGroup;
-    }
+
     public void startGroup(UUID groupId) {
         GroupEntity group = repository.findById(groupId).orElseThrow(() -> new DataNotFoundException("resource with id: " + groupId + " not found"));
         if (group.getGroupStatus().equals(GroupStatus.FINISHED) || group.getGroupStatus().equals(GroupStatus.STARTED)) {
@@ -155,7 +153,7 @@ public class GroupService extends BaseService<GroupEntity, UUID, GroupRepository
             createLesson(group.getId(), group.getModule());
         }
         repository.save(group);
-        modifiedGroup=group;
+
     }
 
     private void createLesson(UUID groupId, int module) {

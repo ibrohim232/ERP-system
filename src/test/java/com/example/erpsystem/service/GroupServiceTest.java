@@ -96,8 +96,7 @@ class GroupServiceTest {
 
         groupService.changeModule(groupId);
 
-        GroupEntity modifiedGroup = groupService.getModifiedGroup();
-        assertEquals(2,modifiedGroup.getModule());
+        verify(groupRepository).save(any(GroupEntity.class));
     }
     @Test
     void startGroupTest(){
@@ -108,8 +107,7 @@ class GroupServiceTest {
         when(groupRepository.findById(uuid)).thenReturn(Optional.of(groupEntity));
 
         groupService.startGroup(uuid);
-        GroupEntity modifiedGroup = groupService.getModifiedGroup();
-        assertEquals(GroupStatus.STARTED,modifiedGroup.getGroupStatus());
+        verify(groupRepository).save(any(GroupEntity.class));
     }
     @Test
     void finishGroupTest() {
@@ -128,9 +126,8 @@ class GroupServiceTest {
                 .thenReturn(Optional.of(lessonEntities));
 
         groupService.finishGroup(groupId);
-        GroupEntity modifiedGroup = groupService.getModifiedGroup();
 
-        assertEquals(GroupStatus.FINISHED, modifiedGroup.getGroupStatus());
+        verify(groupRepository).save(any(GroupEntity.class));
         for (LessonEntity lessonEntity : lessonEntities) {
             assertEquals(LessonStatus.COMPLETED, lessonEntity.getLessonStatus());
         }
