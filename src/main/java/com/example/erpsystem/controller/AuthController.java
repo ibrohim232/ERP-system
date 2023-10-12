@@ -25,9 +25,9 @@ public class AuthController {
         return userService.singIn(singIdDto);
     }
 
-    @PostMapping("/validation")
-    public JwtResponse validation(@RequestParam String email, @RequestParam int code){
-     return userService.checkCode(email,code);
+    @PostMapping("/verify")
+    public JwtResponse verify(@RequestParam String email, @RequestParam int code){
+     return userService.verify(email,code);
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN') and hasAuthority('USER_GET')")

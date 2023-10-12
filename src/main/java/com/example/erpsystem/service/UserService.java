@@ -63,6 +63,7 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(sender);
             message.setTo(createReq.getEmail());
+            message.setSubject("Verify code");
             message.setText(String.valueOf(user.getCode()));
             javaMailSender.send(message);
             return mapEntityToRES(repository.save(user));
@@ -85,7 +86,7 @@ public class UserService extends BaseService<UserEntity, UUID, UserRepository, U
         }
     }
 
-    public JwtResponse checkCode(String email, int code) {
+    public JwtResponse verify(String email, int code) {
         UserEntity user = repository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("user not found"));
         if (user.getCode() == code) {
             user.setValidate(true);

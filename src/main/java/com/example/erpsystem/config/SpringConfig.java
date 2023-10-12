@@ -24,7 +24,7 @@ public class SpringConfig {
     private final AuthenticationService authenticationService;
 
 
-    private final String[] WHITE_LIST = {"/sign-up", "/sign-in", "/validation"};
+    private final String[] WHITE_LIST = {"/sign-up", "/sign-in", "/verify"};
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
